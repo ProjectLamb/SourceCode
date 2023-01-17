@@ -35,8 +35,6 @@ int random()	//0 or 1
 	return dis(gen);
 }
 
-//현재 버그: 9 * 8 사이즈로 제한해놔서 그 범위를 넘어가면 방이 안 만들어짐
-
 class Room	//방 클래스
 {
 public:
@@ -79,29 +77,26 @@ void GenerateStage()
 
 	q.push(room[initRoomNumber].roomNumber);
 	room[initRoomNumber].type = "start";
-	int amount = 1;
+	int amount = 0;
 
-	while (1)
+	while (amount != roomAmount)
 	{
-		if (q.empty())
+		if (q.empty())	//만약 방 개수가 최대 방개수와 일치하지 않다면
 		{
-			if (amount == roomAmount)
-				break;
-			else	//만약 방이 최대 방까지 채워지지 못할 경우 초기화하고 다시 시행
-			{
-				for (int i = 1; i <= maxRoom; i++)
-					room[i].ResetRoom();
+			for (int i = 1; i <= maxRoom; i++)	//초기화 후 다시 실행
+				room[i].ResetRoom();
 
-				while (!q.empty())
-					q.pop();
-				cout << "Error: Not enough room. Fail to generate" << endl;	//에러 메세지 출력
-				q.push(room[initRoomNumber].roomNumber);
-				room[initRoomNumber].type = "start";
-				amount = 1;
-			}
+			cout << "Error: Not enough room. Fail to generate" << "\n";	//에러 메세지 출력
+			q.push(room[initRoomNumber].roomNumber);
+			room[initRoomNumber].type = "start";
+			amount = 0;
 		}
-		
-		room[q.front()].OccupyRoom();
+
+		if (q.front() >= 1 && q.front() <= maxRoom && room[q.front()].vacancy)	//방 번호가 1 ~ maxRoom까지이며 중복이 아닐 경우
+		{
+			room[q.front()].OccupyRoom();
+			amount++;
+		}
 
 		for (int i = 0; i < 4; i++)	//인접 방 차지 알고리즘, 좌 우 상 하 순으로 4번 실행
 		{
@@ -131,15 +126,14 @@ void GenerateStage()
 				continue;
 
 			q.push(num);
-			amount++;
+			cout << num << endl;
 		}
 		q.pop();
-		//cout << amount << endl;
 	}
 
-	cout << "====================" << endl;
-	cout << "Number of rooms: " << roomAmount << endl;
-	cout << "====================" << endl;
+	cout << "====================" << "\n";
+	cout << "Number of rooms: " << roomAmount << "\n";
+	cout << "====================" << "\n";
 
 	for (int i = 1; i <= maxRoom; i++)
 	{
