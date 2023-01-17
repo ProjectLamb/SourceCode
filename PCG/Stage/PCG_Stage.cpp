@@ -126,7 +126,6 @@ void GenerateStage()
 				continue;
 
 			q.push(num);
-			cout << num << endl;
 		}
 		q.pop();
 	}
