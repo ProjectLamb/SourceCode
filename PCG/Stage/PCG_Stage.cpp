@@ -2,8 +2,8 @@
 #include <random>
 #include <queue>
 
-#define maxX 9
-#define maxY 8
+#define maxX 10
+#define maxY 10
 
 using namespace std;
 
@@ -57,21 +57,76 @@ public:
 	{
 		type = s;
 	}
+	bool CheckAdjacency(Room* r)
+	{
+		int i = 0;
+		if (!r[roomNumber - 1].vacancy)
+			i++;
+		if (!r[roomNumber + 1].vacancy)
+			i++;
+		if (!r[roomNumber - maxX].vacancy)
+			i++;
+		if (!r[roomNumber + maxX].vacancy)
+			i++;
+
+		if (i > 1)
+			return true;
+		else
+			return false;
+	}
+	bool CheckEndRoom(Room* r)
+	{
+		if (r[roomNumber].type == "start")
+			return false;
+
+		int i = 0;
+		if (!r[roomNumber - 1].vacancy)
+			i++;
+		if (!r[roomNumber + 1].vacancy)
+			i++;
+		if (!r[roomNumber - maxX].vacancy)
+			i++;
+		if (!r[roomNumber + maxX].vacancy)
+			i++;
+
+		if (i == 1)
+			return true;
+		else
+			return false;
+	}
+	bool CheckAdjacentStartRoom(Room* r)
+	{
+		int i = 0;
+		if (r[roomNumber - 1].type == "start")
+			i++;
+		if (r[roomNumber + 1].type == "start")
+			i++;
+		if (r[roomNumber - maxX].type == "start")
+			i++;
+		if (r[roomNumber + maxX].type == "start")
+			i++;
+
+		if (i == 0)
+			return true;
+		else
+			return false;
+	}
 	int roomNumber;	//방 번호 1 ~ maxRoom
 	bool vacancy = true;	//비어있는지의 여부
-	string type;
+	string type;	//start, normal, shop, boss
 };
 
-void GenerateStage()
+void GenerateStage(int n)
 {
-	int roomAmount = random(7, 8);	//7 ~ 8개 랜덤
 	Room room[maxX * maxY + 1];
+	int roomAmount = n;	//7 ~ 8개 랜덤
 	int maxRoom = maxX * maxY;	//방 전체 개수 (빈 방 포함)
 
 	for (int i = 1; i <= maxRoom; i++)
 		room[i].roomNumber = i;
 
 	queue<int> q;	//실제로 채울 방의 방 번호가 들어갈 큐
+	queue<int> endQ;	//막다른 방의 방 번호가 들어갈 큐
 
 	int initRoomNumber = maxRoom / 2 - maxX / 2;
 
@@ -86,7 +141,7 @@ void GenerateStage()
 			for (int i = 1; i <= maxRoom; i++)	//초기화 후 다시 실행
 				room[i].ResetRoom();
 
-			cout << "Error: Not enough room. Fail to generate" << "\n";	//에러 메세지 출력
+			//cout << "Error: Not enough room. Fail to generate" << "\n";	//에러 메세지 출력
 			q.push(room[initRoomNumber].roomNumber);
 			room[initRoomNumber].type = "start";
 			amount = 0;
@@ -120,43 +175,81 @@ void GenerateStage()
 
 			if (!room[num].vacancy)	//만약 인접 방이 있다면
 				continue;
+			if (room[num].CheckAdjacency(room))	//만약 인접 방 자체가 2개 이상의 인접 방이 있을 경우 (순환 방지)
+				continue;
 			if (amount == roomAmount)	//만약 방 개수가 이미 다 찼다면
 				continue;
 			if (random())	//50% 확률로 포기 -> 다양한 맵 생성
 				continue;
 
+			if (num >= 1 && num <= maxRoom && room[num].vacancy)
+			{
+				room[num].OccupyRoom();
+				amount++;
+			}
 			q.push(num);
 		}
 		q.pop();
 	}
 
-	cout << "====================" << "\n";
-	cout << "Number of rooms: " << roomAmount << "\n";
-	cout << "====================" << "\n";
-
 	for (int i = 1; i <= maxRoom; i++)
+		if (!room[i].vacancy && room[i].CheckEndRoom(room))
+			endQ.push(i);
+
+	queue<string> endRoomSet;
+	endRoomSet.push("shop");
+	endRoomSet.push("boss");
+
+	while (!endRoomSet.empty())
+	{
+		endQ.push(endQ.front());
+		endQ.pop();
+
+		if (!random())
+			continue;
+		if (endRoomSet.front() == "boss" && !room[endQ.front()].CheckAdjacentStartRoom(room))
+			continue;
+		room[endQ.front()].type = endRoomSet.front();
+		endQ.pop();
+		endRoomSet.pop();
+	}
+
+	cout << "====================" << "\n";
+	for (int i = 1; i <= maxX * maxY; i++)
 	{
 		if (!room[i].vacancy)
+		{
 			if (room[i].type == "start")
 				cout << "S";
-			else
+			else if (room[i].type == "boss")
+				cout << "B";
+			else if (room[i].type == "shop")
+				cout << "$";
+			else if (room[i].type == "normal")
 				cout << "O";
+		}
 		else
 			cout << " ";
 		//cout << room[i].roomNumber;
 		if (i % maxX == 0)
 			cout << "\n";
 	}
+	cout << "====================" << "\n";
 }
 
 int main()
 {
+	int roomAmount = random(7, 8);
 	int genAmount = 1;
 	cout << "Input Generate Amount: ";
 	cin >> genAmount;
 
-	for (int i = 0; i < genAmount; i++)
-		GenerateStage();
+	for (int i = 1; i <= genAmount; i++)
+	{
+		cout << "#" << i << " Stage\n";
+		cout << "Number of rooms: " << roomAmount << "\n";
+		GenerateStage(roomAmount);
+	}
 
 	return 0;
 }
