@@ -35,7 +35,7 @@ int random()	//0 or 1
 	return dis(gen);
 }
 
-class Room	//¹æ Å¬·¡½º
+class Room	//ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½
 {
 public:
 	Room()
@@ -111,22 +111,22 @@ public:
 		else
 			return false;
 	}
-	int roomNumber;	//¹æ ¹øÈ£ 1 ~ maxRoom
-	bool vacancy = true;	//ºñ¾îÀÖ´ÂÁöÀÇ ¿©ºÎ
+	int roomNumber;	//ï¿½ï¿½ ï¿½ï¿½È£ 1 ~ maxRoom
+	bool vacancy = true;	//ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	string type;	//start, normal, shop, boss
 };
 
 void GenerateStage(int n)
 {
 	Room room[maxX * maxY + 1];
-	int roomAmount = n;	//7 ~ 8°³ ·£´ý
-	int maxRoom = maxX * maxY;	//¹æ ÀüÃ¼ °³¼ö (ºó ¹æ Æ÷ÇÔ)
+	int roomAmount = n;	//7 ~ 8ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	int maxRoom = maxX * maxY;	//ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 
 	for (int i = 1; i <= maxRoom; i++)
 		room[i].roomNumber = i;
 
-	queue<int> q;	//½ÇÁ¦·Î Ã¤¿ï ¹æÀÇ ¹æ ¹øÈ£°¡ µé¾î°¥ Å¥
-	queue<int> endQ;	//¸·´Ù¸¥ ¹æÀÇ ¹æ ¹øÈ£°¡ µé¾î°¥ Å¥
+	queue<int> q;	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½È£ï¿½ï¿½ ï¿½ï¿½î°¥ Å¥
+	queue<int> endQ;	//ï¿½ï¿½ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½È£ï¿½ï¿½ ï¿½ï¿½î°¥ Å¥
 
 	int initRoomNumber = maxRoom / 2 - maxX / 2;
 
@@ -136,26 +136,26 @@ void GenerateStage(int n)
 
 	while (amount != roomAmount)
 	{
-		if (q.empty())	//¸¸¾à ¹æ °³¼ö°¡ ÃÖ´ë ¹æ°³¼ö¿Í ÀÏÄ¡ÇÏÁö ¾Ê´Ù¸é
+		if (q.empty())	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½æ°³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Ù¸ï¿½
 		{
-			for (int i = 1; i <= maxRoom; i++)	//ÃÊ±âÈ­ ÈÄ ´Ù½Ã ½ÇÇà
+			for (int i = 1; i <= maxRoom; i++)	//ï¿½Ê±ï¿½È­ ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				room[i].ResetRoom();
 
-			//cout << "Error: Not enough room. Fail to generate" << "\n";	//¿¡·¯ ¸Þ¼¼Áö Ãâ·Â
+			//cout << "Error: Not enough room. Fail to generate" << "\n";	//ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 			q.push(room[initRoomNumber].roomNumber);
 			room[initRoomNumber].type = "start";
 			amount = 0;
 		}
 
-		if (q.front() >= 1 && q.front() <= maxRoom && room[q.front()].vacancy)	//¹æ ¹øÈ£°¡ 1 ~ maxRoom±îÁöÀÌ¸ç Áßº¹ÀÌ ¾Æ´Ò °æ¿ì
+		if (q.front() >= 1 && q.front() <= maxRoom && room[q.front()].vacancy)	//ï¿½ï¿½ ï¿½ï¿½È£ï¿½ï¿½ 1 ~ maxRoomï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ßºï¿½ï¿½ï¿½ ï¿½Æ´ï¿½ ï¿½ï¿½ï¿½
 		{
 			room[q.front()].OccupyRoom();
 			amount++;
 		}
 
-		for (int i = 0; i < 4; i++)	//ÀÎÁ¢ ¹æ Â÷Áö ¾Ë°í¸®Áò, ÁÂ ¿ì »ó ÇÏ ¼øÀ¸·Î 4¹ø ½ÇÇà
+		for (int i = 0; i < 4; i++)	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ë°ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 4ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		{
-			int num = q.front();	//¹æ ¹øÈ£
+			int num = q.front();	//ï¿½ï¿½ ï¿½ï¿½È£
 
 			switch (i)
 			{
@@ -173,13 +173,13 @@ void GenerateStage(int n)
 				break;
 			}
 
-			if (!room[num].vacancy)	//¸¸¾à ÀÎÁ¢ ¹æÀÌ ÀÖ´Ù¸é
+			if (!room[num].vacancy)	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ù¸ï¿½
 				continue;
-			if (room[num].CheckAdjacency(room))	//¸¸¾à ÀÎÁ¢ ¹æ ÀÚÃ¼°¡ 2°³ ÀÌ»óÀÇ ÀÎÁ¢ ¹æÀÌ ÀÖÀ» °æ¿ì (¼øÈ¯ ¹æÁö)
+			if (room[num].CheckAdjacency(room))	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ 2ï¿½ï¿½ ï¿½Ì»ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ (ï¿½ï¿½È¯ ï¿½ï¿½ï¿½ï¿½)
 				continue;
-			if (amount == roomAmount)	//¸¸¾à ¹æ °³¼ö°¡ ÀÌ¹Ì ´Ù Ã¡´Ù¸é
+			if (amount == roomAmount)	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¹ï¿½ ï¿½ï¿½ Ã¡ï¿½Ù¸ï¿½
 				continue;
-			if (random())	//50% È®·ü·Î Æ÷±â -> ´Ù¾çÇÑ ¸Ê »ý¼º
+			if (random())	//50% È®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ -> ï¿½Ù¾ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				continue;
 
 			if (num >= 1 && num <= maxRoom && room[num].vacancy)
@@ -239,7 +239,7 @@ void GenerateStage(int n)
 
 int main()
 {
-	int roomAmount = random(7, 8);
+	int roomAmount = random(7, 9);
 	int genAmount = 1;
 	cout << "Input Generate Amount: ";
 	cin >> genAmount;
