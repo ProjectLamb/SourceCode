@@ -239,13 +239,13 @@ void GenerateStage(int n)
 
 int main()
 {
-	int roomAmount = random(7, 9);
 	int genAmount = 1;
 	cout << "Input Generate Amount: ";
 	cin >> genAmount;
 
 	for (int i = 1; i <= genAmount; i++)
 	{
+		int roomAmount = random(7, 10);
 		cout << "#" << i << " Stage\n";
 		cout << "Number of rooms: " << roomAmount << "\n";
 		GenerateStage(roomAmount);
