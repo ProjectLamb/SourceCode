@@ -5,6 +5,7 @@
 - 아이작의 챕터 생성과 유사한 방식으로 절차적 챕터 생성을 구현한 코드
 - 스테이지의 종류는 4가지로, 노말, 보스, 스타트, 상점이 존재함.
 - 스테이지의 생성 개수 조절 가능.
+
 [참고 사이트](https://www.boristhebrave.com/2020/09/12/dungeon-generation-in-binding-of-isaac/)
 
 ---
@@ -25,6 +26,7 @@
 - Room을 Class로 선언.
 - 챕터는 콘솔창에서 텍스트 형식으로 출력됨.
 
+
 ##### 사용법
 - 생성하고 싶은 만큼의 챕터 수 **N**을 입력하면 끝
 ```
@@ -35,13 +37,16 @@ B: 보스방
 ```
 
 ##### 결과창
-![[Chapter.gif]]
+<img src="https://github.com/ProjectLamb/SourceCode/blob/neoskyclad/PCG/Chapter/_image/Chapter.gif?raw=true"/>
+
 - 용어의 혼선이 있다. 스테이지가 아닌 **챕터**를 10개 생성한 모습이다.
 
+---
 ### 2. MapGenerator.cs
 - C# 언어로 유니티에서 구현한 소스코드
 - Room이 구조체로 선언, 코드내에서 논리적으로 구현.
 - 실제 인게임에선 지정된 스테이지 Prefab을 사용하여 Instantiate함.
+
 
 ##### 사용법
 - 빈 GameObject에 MapGenerator.cs 스크립트를 넣고 게임을 실행하면 자동 생성됨.
@@ -54,5 +59,6 @@ B: 보스방
 ```
 
 ##### 결과창
-![[MapGenerator.gif]]
+<img src="https://github.com/ProjectLamb/SourceCode/blob/neoskyclad/PCG/Chapter/_image/MapGenerator.gif?raw=true"/>
+
 - 실행할 때마다 다른 형태의 챕터가 생성되는 모습.
