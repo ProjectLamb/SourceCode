@@ -245,7 +245,7 @@ int main()
 
 	for (int i = 1; i <= genAmount; i++)
 	{
-		int roomAmount = random(7, 10);
+		int roomAmount = random(8, 10);
 		cout << "#" << i << " Stage\n";
 		cout << "Number of rooms: " << roomAmount << "\n";
 		GenerateStage(roomAmount);
