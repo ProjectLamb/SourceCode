@@ -1,4 +1,4 @@
-# SourceCode
-소스 코드를 저장하는 레포지토리
-- 본인 ID명으로 브랜치파서 업로드 해주세요.
-- Main으로 브랜치할 때 pull 요청 보내면 됩니다.
+# Player
+Player의 8방향 이동에 관련한 코드입니다.
+- PlayerMovement - 플레이어 이동
+- PlayerInput - 플레이어 입력
