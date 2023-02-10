@@ -1,15 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class MapGenerator : MonoBehaviour
 {
-    int maxX = 10;
-    int maxY = 10;
+    int maxX = 15;
+    int maxY = 15;
 
-    [Range(8,10)]
+    [Range(8,10), Tooltip("Amount is random from N to N + 2")]
+
     public int roomAmount; //editable or not
-    struct Room
+    public List<GameObject> roomArray = new List<GameObject>();
+    public GameObject roomObject;
+    public struct Room
     {
         public Room(int n)
         {
@@ -105,10 +107,7 @@ public class MapGenerator : MonoBehaviour
         private string type;	//start, normal, shop, boss
     };
     
-    public GameObject normalRoom;
-    public GameObject startRoom;
-    public GameObject bossRoom;
-    public GameObject shopRoom;
+    public Room[] room;
     bool random()
     {
         int n = Random.Range(0, 2);
@@ -119,7 +118,7 @@ public class MapGenerator : MonoBehaviour
     } 
     void GenerateStage(int n)
 {
-    Room[] room = new Room[maxX * maxY + 1];
+    room = new Room[maxX * maxY + 1];
 	int roomAmount = n;
 	int maxRoom = maxX * maxY;
 
@@ -129,7 +128,7 @@ public class MapGenerator : MonoBehaviour
 	Queue<int> q = new Queue<int>();
 	Queue<int> endQ = new Queue<int>();
 
-	int initRoomNumber = maxRoom / 2 - maxX / 2;
+	int initRoomNumber = maxX * maxY / 2;
 
 	q.Enqueue(room[initRoomNumber].GetRoomNumber());
 	room[initRoomNumber].SetRoomType("start");
@@ -141,8 +140,6 @@ public class MapGenerator : MonoBehaviour
 		{
 			for (int i = 1; i <= maxRoom; i++)
 				room[i].ResetRoom();
-
-			//cout << "Error: Not enough room. Fail to generate" << "\n";	//���� �޼��� ���
 			q.Enqueue(room[initRoomNumber].GetRoomNumber());
 			room[initRoomNumber].SetRoomType("start");
 			amount = 0;
@@ -191,6 +188,7 @@ public class MapGenerator : MonoBehaviour
 			q.Enqueue(num);
 		}
 		q.Dequeue();
+        InfiniteLoopDetector.Run(); 
 	}
 
 	for (int i = 1; i <= maxRoom; i++)
@@ -217,29 +215,29 @@ public class MapGenerator : MonoBehaviour
 
     int x = 0;
     int z = 0;
-    int roomInterval = 10; //room's length
+    int roomInterval = roomObject.GetComponent<RoomGenerator>().GetMaxSize(); //room gameobect's width
 
     for(int i = 1; i <= maxX * maxY; i++)
     {
         Vector3 roomPos = new Vector3(x, 0, z);
         if(!room[i].IsVacant())
         {
-            if(room[i].GetRoomType() == "start")
-            {
-                Instantiate(startRoom, roomPos, Quaternion.identity);
-            }
-            else if (room[i].GetRoomType() == "boss")
-            {
-                Instantiate(bossRoom, roomPos, Quaternion.identity);
-            }
-            else if (room[i].GetRoomType() == "shop")
-            {
-                Instantiate(shopRoom, roomPos, Quaternion.identity);
-            }
-            else if (room[i].GetRoomType() == "normal")
-            {
-                Instantiate(normalRoom, roomPos, Quaternion.identity);
-            }
+            GameObject instance;
+            bool[] portal = new bool[4]; //east, west, south, north
+            instance = Instantiate(roomObject, roomPos, Quaternion.identity);
+            instance.GetComponent<RoomGenerator>().SetRoomType(room[i].GetRoomType());
+            instance.GetComponent<RoomGenerator>().SetRoomLocation(roomPos.x, roomPos.z);
+            if(!room[i-1].IsVacant())
+                portal[0] = true;
+            if(!room[i+1].IsVacant())
+                portal[1] = true;
+            if(!room[i+maxX].IsVacant())
+                portal[2] = true;
+            if(!room[i-maxX].IsVacant())
+                portal[3] = true;
+            instance.GetComponent<RoomGenerator>().SetPortal(portal[0], portal[1], portal[2], portal[3]);
+            instance.transform.parent = transform;
+            roomArray.Add(instance);
         }
         if(i % maxX == 0)
             {
@@ -252,15 +250,10 @@ public class MapGenerator : MonoBehaviour
             }
     }
 }
-    void Start()
+    void Awake()
     {
-        //roomAmount = Random.Range(8, 11);
+        roomAmount = Random.Range(roomAmount, roomAmount + 3);
+        Debug.Log("Generated amount of stages: " + roomAmount);
         GenerateStage(roomAmount);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
